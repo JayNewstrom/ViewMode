@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">View Mode Sample</string>
+    <string name="switch_view_modes">Switch View Modes</string>
+    <string name="failed_to_load">Failed to load</string>
+</resources>
