@@ -29,9 +29,9 @@ public final class MainActivity extends Activity {
 Setup
 ------------
 ```groovy
-buildscript {
-    repositories {
-        jcenter()
+repositories {
+    maven {
+        url  "http://dl.bintray.com/jaynewstrom/ViewMode" 
     }
 }
 
