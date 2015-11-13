@@ -13,6 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @RunWith(AndroidJUnit4.class)
 public final class ViewModeViewTest {
 
@@ -25,31 +30,59 @@ public final class ViewModeViewTest {
                 android.support.design.R.style.Base_Theme_AppCompat);
     }
 
-    @Test @UiThreadTest public void testCurrentViewModeIsNullByDefault() {
+    @Test @UiThreadTest public void ensureCurrentViewModeIsNullByDefault() {
         ViewModeView view = new ViewModeView(context);
         Assert.assertNull(view.currentViewMode());
     }
 
-    @Test @UiThreadTest public void testShowViewModeUpdatesCurrentView() {
+    @Test @UiThreadTest public void whenCachingIsEnabledEnsureShowingTheViewCachesTheView() {
         ViewModeView view = new ViewModeView(context);
-        ViewMode simpleViewMode = new ViewMode() {
-            @Override public View createView(ViewModeView parent) {
-                return new View(parent.getContext());
-            }
-        };
-        view.showViewMode(simpleViewMode);
-        Assert.assertEquals(simpleViewMode, view.currentViewMode());
+        ViewMode viewMode = mock(ViewMode.class);
+        View cachedView = new View(view.getContext());
+        when(viewMode.createView(view)).thenReturn(cachedView, new View(view.getContext()));
+        view.showViewMode(viewMode);
+        Assert.assertEquals(cachedView, view.viewForViewMode(viewMode));
     }
 
-    @Test @UiThreadTest public void testViewForViewModeReturnsCachedView() {
+    @Test @UiThreadTest public void whenCachingIsEnabledEnsureTheSameViewIsReturned() {
         ViewModeView view = new ViewModeView(context);
-        final View cachedView = new View(view.getContext());
-        ViewMode simpleViewMode = new ViewMode() {
-            @Override public View createView(ViewModeView parent) {
-                return cachedView;
+        ViewMode viewMode = mock(ViewMode.class);
+        when(viewMode.createView(view)).thenReturn(new View(view.getContext()), new View(view.getContext()));
+        Assert.assertEquals(view.viewForViewMode(viewMode), view.viewForViewMode(viewMode));
+    }
+
+    @Test @UiThreadTest public void whenCachingIsDisabledEnsureDifferentViewsAreReturned() {
+        ViewModeView view = new ViewModeView(context);
+        view.setCacheViews(false);
+        ViewMode viewMode = mock(ViewMode.class);
+        when(viewMode.createView(view)).thenReturn(new View(view.getContext()), new View(view.getContext()));
+        Assert.assertNotEquals(view.viewForViewMode(viewMode), view.viewForViewMode(viewMode));
+    }
+
+    @Test @UiThreadTest public void ensureChangingViewModesOnlyCreatesTheViewOnce() {
+        ViewModeView view = new ViewModeView(context);
+        ViewMode viewMode = mock(ViewMode.class);
+        when(viewMode.createView(view)).thenReturn(new View(view.getContext()), new View(view.getContext()));
+        view.showViewMode(viewMode);
+        view.showViewMode(viewMode);
+        verify(viewMode, times(1)).createView(view);
+    }
+
+    @Test @UiThreadTest public void ensureOnlyOneChildViewIsVisible() {
+        ViewModeView view = new ViewModeView(context);
+        ViewMode viewModeOne = mock(ViewMode.class);
+        when(viewModeOne.createView(view)).thenReturn(new View(view.getContext()));
+        ViewMode viewModeTwo = mock(ViewMode.class);
+        when(viewModeTwo.createView(view)).thenReturn(new View(view.getContext()));
+        view.showViewMode(viewModeOne);
+        view.showViewMode(viewModeTwo);
+        Assert.assertEquals(2, view.getChildCount());
+        int visibleChildren = 0;
+        for (int i = 0, childCount = view.getChildCount(); i < childCount; i++) {
+            if (view.getChildAt(i).getVisibility() == View.VISIBLE) {
+                visibleChildren++;
             }
-        };
-        view.showViewMode(simpleViewMode);
-        Assert.assertEquals(cachedView, view.viewForViewMode(simpleViewMode));
+        }
+        Assert.assertEquals(1, visibleChildren);
     }
 }
