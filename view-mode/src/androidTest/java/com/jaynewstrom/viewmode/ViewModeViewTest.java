@@ -85,4 +85,16 @@ public final class ViewModeViewTest {
         }
         Assert.assertEquals(1, visibleChildren);
     }
+
+    @Test @UiThreadTest public void whenCachingIsDisabledEnsureOnlyOneChildIsAddedToTheView() {
+        ViewModeView view = new ViewModeView(context);
+        view.setCacheViews(false);
+        ViewMode viewModeOne = mock(ViewMode.class);
+        when(viewModeOne.createView(view)).thenReturn(new View(view.getContext()));
+        ViewMode viewModeTwo = mock(ViewMode.class);
+        when(viewModeTwo.createView(view)).thenReturn(new View(view.getContext()));
+        view.showViewMode(viewModeOne);
+        view.showViewMode(viewModeTwo);
+        Assert.assertEquals(1, view.getChildCount());
+    }
 }
