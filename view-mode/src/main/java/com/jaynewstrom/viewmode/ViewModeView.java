@@ -1,6 +1,7 @@
 package com.jaynewstrom.viewmode;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,21 +18,27 @@ public final class ViewModeView extends CoordinatorLayout {
 
     public ViewModeView(Context context) {
         super(context);
-        initialize();
+        initialize(null);
     }
 
     public ViewModeView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initialize();
+        initialize(attrs);
     }
 
     public ViewModeView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initialize();
+        initialize(attrs);
     }
 
-    private void initialize() {
-        cacheViews = true;
+    private void initialize(AttributeSet attrs) {
+        if (attrs == null) {
+            cacheViews = true;
+        } else {
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ViewModeView);
+            cacheViews = a.getBoolean(R.styleable.ViewModeView_view_mode_caching, true);
+            a.recycle();
+        }
     }
 
     public void showViewMode(ViewMode viewMode) {
