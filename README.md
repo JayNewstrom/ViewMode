@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.jaynewstrom:view-mode:1.0.0'
+    compile 'com.jaynewstrom:view-mode:1.1.0'
 }
 ```
 
