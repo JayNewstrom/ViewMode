@@ -29,12 +29,6 @@ public final class MainActivity extends Activity {
 Setup
 ------------
 ```groovy
-repositories {
-    maven {
-        url  "http://dl.bintray.com/jaynewstrom/ViewMode" 
-    }
-}
-
 dependencies {
     compile 'com.jaynewstrom:view-mode:1.1.0'
 }
