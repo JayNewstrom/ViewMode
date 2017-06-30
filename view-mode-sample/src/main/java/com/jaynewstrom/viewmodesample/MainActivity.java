@@ -5,17 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.jaynewstrom.viewmode.ViewModeView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public final class MainActivity extends AppCompatActivity {
 
     private static final String SAVED_STATE_VIEW_MODE = "savedState.viewMode";
 
-    @Bind(R.id.view_mode_view) ViewModeView viewModeView;
+    @BindView(R.id.view_mode_view) ViewModeView viewModeView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
