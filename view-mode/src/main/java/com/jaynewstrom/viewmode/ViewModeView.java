@@ -9,6 +9,8 @@ import android.view.View;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 public final class ViewModeView extends CoordinatorLayout {
 
     private final Map<ViewMode, View> cachedViewModes = new LinkedHashMap<>();
@@ -21,7 +23,7 @@ public final class ViewModeView extends CoordinatorLayout {
         initialize(null);
     }
 
-    public ViewModeView(Context context, AttributeSet attrs) {
+    public ViewModeView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize(attrs);
     }
@@ -31,7 +33,7 @@ public final class ViewModeView extends CoordinatorLayout {
         initialize(attrs);
     }
 
-    private void initialize(AttributeSet attrs) {
+    private void initialize(@Nullable AttributeSet attrs) {
         if (attrs == null) {
             cacheViews = true;
         } else {
