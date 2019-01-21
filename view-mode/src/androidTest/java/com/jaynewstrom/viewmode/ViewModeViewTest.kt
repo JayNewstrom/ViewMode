@@ -2,11 +2,11 @@ package com.jaynewstrom.viewmode
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.test.InstrumentationRegistry
-import androidx.test.annotation.UiThreadTest
-import androidx.test.runner.AndroidJUnit4
 import android.view.ContextThemeWrapper
 import android.view.View
+import androidx.test.annotation.UiThreadTest
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -26,8 +26,8 @@ class ViewModeViewTest {
     fun setupContext() {
         // CoordinatorLayout needs a context that extends from Base_Theme_AppCompat
         context = ContextThemeWrapper(
-            InstrumentationRegistry.getTargetContext(),
-            android.support.design.R.style.Base_Theme_AppCompat
+            ApplicationProvider.getApplicationContext<Context>(),
+            androidx.appcompat.R.style.Base_Theme_AppCompat
         )
     }
 
