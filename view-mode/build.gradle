@@ -7,7 +7,7 @@ android {
     defaultConfig {
         versionCode 1
         versionName '1.0'
-        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testApplicationId 'com.jaynewstrom.viewmode.androidTest'
     }
     buildTypes {
@@ -18,10 +18,11 @@ android {
 }
 
 dependencies {
-    api 'com.android.support:design:28.0.0'
+    api 'com.google.android.material:material:1.0.0'
     api deps.kotlinRuntime
 
     androidTestImplementation deps.junit
+    androidTestImplementation deps.junitAndroidTest
     androidTestImplementation deps.testRunner
     androidTestImplementation deps.testRules
     androidTestImplementation deps.espressoCore

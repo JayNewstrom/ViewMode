@@ -7,9 +7,10 @@ buildscript {
             kotlinRuntime: "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
 
             junit: 'junit:junit:4.12',
-            testRunner: 'com.android.support.test:runner:1.0.2',
-            testRules: 'com.android.support.test:rules:1.0.2',
-            espressoCore: 'com.android.support.test.espresso:espresso-core:3.0.2',
+            testRunner: 'androidx.test:runner:1.1.1',
+            testRules: 'androidx.test:rules:1.1.1',
+            junitAndroidTest: 'androidx.test.ext:junit:1.1.0',
+            espressoCore: 'androidx.test.espresso:espresso-core:3.1.1',
             mockitoAndroid: 'org.mockito:mockito-android:2.21.0',
 
     ]
