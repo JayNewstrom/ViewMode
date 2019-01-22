@@ -1,16 +1,18 @@
 package com.jaynewstrom.viewmode
 
 import android.content.Context
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import android.util.AttributeSet
 import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import java.util.LinkedHashMap
 
 class ViewModeView : CoordinatorLayout {
     private val cachedViewModes = LinkedHashMap<ViewMode, View>()
 
     private var currentViewMode: ViewMode? = null
+    private var currentView: View? = null
     private var cacheViews: Boolean = false
+    private var transitioning: Boolean = false
 
     constructor(context: Context) : super(context) {
         initialize(null)
@@ -34,16 +36,38 @@ class ViewModeView : CoordinatorLayout {
         }
     }
 
-    fun showViewMode(viewMode: ViewMode) {
+    fun showViewMode(viewMode: ViewMode, transition: ViewModeTransition = DefaultViewModeTransition) {
+        if (transitioning) {
+            throw IllegalStateException("A transition is already occurring.")
+        }
         if (currentViewMode == null || currentViewMode != viewMode) {
+            transitioning = true
+
+            val previousViewMode = currentViewMode
+            val previousView = currentView
             currentViewMode = viewMode
+
             val viewToShow = viewForViewMode(viewMode)
-            var i = 0
-            val childCount = childCount
-            while (i < childCount) {
-                val childView = getChildAt(i)
-                childView.visibility = if (childView === viewToShow) View.VISIBLE else View.GONE
-                i++
+            currentView = viewToShow
+            addView(viewToShow)
+            transition.transition(previousViewMode, previousView, viewToShow) {
+                var i = 0
+                while (i < childCount) {
+                    val childView = getChildAt(i)
+
+                    if (cacheViews) {
+                        childView.visibility = if (childView === viewToShow) View.VISIBLE else View.GONE
+                        i++
+                    } else {
+                        if (childView === viewToShow) {
+                            i++
+                        } else {
+                            removeViewAt(i)
+                        }
+                    }
+                }
+
+                transitioning = false
             }
         }
     }
@@ -56,17 +80,13 @@ class ViewModeView : CoordinatorLayout {
      * This will return the cached view for the given view mode, or create it if it isn't cached.
      */
     fun viewForViewMode(viewMode: ViewMode): View {
-        var view = cachedViewModes[viewMode]
-        if (view == null) {
-            view = viewMode.createView(this)
-            if (cacheViews) {
-                cachedViewModes[viewMode] = view
-            } else {
-                removeAllViews()
+        return if (cacheViews) {
+            cachedViewModes.getOrPut(viewMode) {
+                viewMode.createView(this)
             }
-            addView(view)
+        } else {
+            viewMode.createView(this)
         }
-        return view
     }
 
     fun setCacheViews(cacheViews: Boolean) {
