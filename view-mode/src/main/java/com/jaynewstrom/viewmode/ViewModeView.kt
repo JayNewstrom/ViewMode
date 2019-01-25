@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import java.util.LinkedHashMap
 
 class ViewModeView : CoordinatorLayout {
     private val cachedViewModes = LinkedHashMap<ViewMode, View>()
@@ -91,5 +90,13 @@ class ViewModeView : CoordinatorLayout {
 
     fun setCacheViews(cacheViews: Boolean) {
         this.cacheViews = cacheViews
+    }
+
+    fun preloadViewMode(viewMode: ViewMode) {
+        if (!cacheViews) {
+            throw IllegalStateException("Preloading is only applicable when caching views.")
+        }
+        // This creates the view, and caches it in our pool, to be added and shown when calling showViewMode.
+        viewForViewMode(viewMode)
     }
 }

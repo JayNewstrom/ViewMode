@@ -150,4 +150,36 @@ class ViewModeViewTest {
         })
         countDownLatch.await()
     }
+
+    @Test @UiThreadTest fun preloadFailsWhenCacheViewsIsFalse() {
+        val view = ViewModeView(context)
+        view.setCacheViews(false)
+        val viewModeOne = mock(ViewMode::class.java)
+        val viewOne = View(view.context)
+        `when`(viewModeOne.createView(view)).thenReturn(viewOne)
+        assertThrowsWithMessage<IllegalStateException>("Preloading is only applicable when caching views.") {
+            view.preloadViewMode(viewModeOne)
+        }
+    }
+
+    @Test @UiThreadTest fun preloadDoesNotAddToViewModeView() {
+        val view = ViewModeView(context)
+        val viewModeOne = mock(ViewMode::class.java)
+        val viewOne = View(view.context)
+        `when`(viewModeOne.createView(view)).thenReturn(viewOne)
+        view.preloadViewMode(viewModeOne)
+        assertEquals(-1, view.indexOfChild(viewOne))
+    }
+
+    @Test @UiThreadTest fun preloadThenShowUsesSameView() {
+        val view = ViewModeView(context)
+        val viewModeOne = mock(ViewMode::class.java)
+        val viewOne = View(view.context)
+        `when`(viewModeOne.createView(view)).thenReturn(viewOne)
+        view.preloadViewMode(viewModeOne)
+        `when`(viewModeOne.createView(view)).thenThrow(AssertionError("Called create view multiple times."))
+        view.showViewMode(viewModeOne)
+        assertEquals(View.VISIBLE, viewOne.visibility)
+        assertEquals(0, view.indexOfChild(viewOne))
+    }
 }
