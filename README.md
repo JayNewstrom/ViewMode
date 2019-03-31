@@ -30,7 +30,7 @@ Setup
 ------------
 ```groovy
 dependencies {
-    compile 'com.jaynewstrom:view-mode:1.1.0'
+    compile 'com.jaynewstrom:view-mode:1.2.0'
 }
 ```
 
